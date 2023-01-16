@@ -2,7 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Models\Listing;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\ListingController;
+
 
 
 /*
@@ -16,15 +18,30 @@ use App\Models\Listing;
 |
 */
 
-Route::get('/', function () {
-    return view('listings', [
-        'heading' => 'Latest Listings',
-        'listings' => Listing::all()
-    ]);
-});
+Route::get('/', [ListingController::class, 'index']);
 
-Route::get('/listings/{id}', function($id){
-    return view('listing', [
-        'listing'=> Listing::find($id)
-    ]);
-});
+Route::get('/listings/create', [ListingController::class, 'create'])->middleware('auth');
+
+Route::post('/listings', [ListingController::class, 'store'])->middleware('auth');
+
+Route::get('/listings/manage', [ListingController::class, 'manage'])->middleware('auth');
+
+Route::get('/listings/{listing}', [ListingController::class, 'show']);
+
+Route::put('/listings/{listing}', [ListingController::class, 'update'])->middleware('auth');
+
+Route::delete('/listings/{listing}', [ListingController::class, 'destroy'])->middleware('auth');
+
+Route::get('/listings/{listing}/edit', [ListingController::class, 'edit'])->middleware('auth');
+
+Route::get('/register', [UserController::class, 'registerUser'])->middleware('guest');
+
+Route::post('/users', [UserController::class, 'store']);
+
+Route::post('/logout', [UserController::class, 'logout'])->middleware('auth');
+
+Route::get('/login', [UserController::class, 'loginUser'])->name('login')->middleware('guest');
+
+Route::post('/users/authenticate', [UserController::class, 'authenticate']);
+
+
